@@ -1,12 +1,38 @@
 <% include ../partials/header %>
 
+<script type="text/javascript">
+
+$(document).ready(function () {
+var deleteResults = function() {
+$.ajax({
+    type: 'DELETE',
+    url: '/stations/<%=station.stations[0].stationName%>/measures',
+    success: function(redirect){
+      //alert(data);
+      window.location=redirect;
+    },
+    error: function () {
+        alert("There was an error processing this page.");
+        return false;
+    }
+});
+}
+
+$("#delete-results").on("click", function (e) {
+  e.preventDefault();
+  deleteResults();
+});
+});
+
+</script>
+
 <main>
 
 <div>   
 
 <%if(station) {%>
 
-<h1>Station: <%=station.stations[0].stationName%></h1>
+<h1>Station: <%=station.stations[0].stationName%><div class="pull-right"><button id="delete-results" type="button" class="btn btn-danger">Delete results</button></div></h1>
 
 <div class="row">
   <div class="col-md-12" style="padding-left: 0, padding-right: 0"> 

@@ -12,7 +12,7 @@ const User = require('../../models/user');
 
 app.use(passport.authenticate('bearer', { session: false }));
 
-app.get('/api/users/stations', function(req, res, next) {
+app.get('/api/stations', function(req, res, next) {
 
 	var user = {
 		apiKey: req.user.apiKey
@@ -31,7 +31,26 @@ app.get('/api/users/stations', function(req, res, next) {
 
 });
 
-app.get('/api/users/stations/:stationName', function(req, res, next) {
+app.get('/api/stations/:stationName', function(req, res, next) {
+
+	var user = {
+		apiKey: req.user.apiKey
+	}
+	
+	User.findOne({apiKey: user.apiKey}, {stations: 1})
+	.exec()
+	.then(stations => {
+		console.log(stations);
+		res.status(200).send(stations)
+	})
+	.catch(err => {
+		console.log(err);
+		res.status(400).send(err);
+	})
+
+});
+
+app.get('/api/stations/:stationName/measures', function(req, res, next) {
 
 	var user = {
 		apiKey: req.user.apiKey
@@ -50,26 +69,7 @@ app.get('/api/users/stations/:stationName', function(req, res, next) {
 
 });
 
-app.get('/api/users/stations/:stationName/measures', function(req, res, next) {
-
-	var user = {
-		apiKey: req.user.apiKey
-	}
-	
-	User.find({apiKey: user.apiKey}, {stations: 1})
-	.exec()
-	.then(stations => {
-		console.log(stations);
-		res.status(200).send(stations)
-	})
-	.catch(err => {
-		console.log(err);
-		res.status(400).send(err);
-	})
-
-});
-
-app.post('/api/users/stations', function(req, res, next) {
+app.post('/api/stations', function(req, res, next) {
 
     var user = {
     	apiKey: req.user.apiKey
@@ -107,7 +107,7 @@ app.post('/api/users/stations', function(req, res, next) {
 	})
 });
 
-app.post('/api/users/stations/:stationName/measures', function(req, res, next) {
+app.post('/api/stations/:stationName/measures', function(req, res, next) {
 
     var user = {
     	apiKey: req.user.apiKey
@@ -137,7 +137,7 @@ app.post('/api/users/stations/:stationName/measures', function(req, res, next) {
 });
 
 // DELETE requests
-app.delete('/api/users/stations', function(req,res,next){
+app.delete('/api/stations', function(req,res,next){
 
 	var user = {
     	apiKey: req.user.apiKey
@@ -158,7 +158,7 @@ app.delete('/api/users/stations', function(req,res,next){
 
 })
 
-app.delete('/api/users/stations/:stationName', function(req,res,next){
+app.delete('/api/stations/:stationName', function(req,res,next){
 
 	var user = {
     	apiKey: req.user.apiKey
