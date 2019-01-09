@@ -1,0 +1,72 @@
+<% include ../partials/header %>
+
+<style>
+.close:hover: {
+  color: 
+}
+
+</style>
+<main>
+
+<div>   
+
+    <%if(stations.length > 0) {%>
+    <div class="row">
+       <% stations.forEach(function(station) { %>
+          <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h4 class="panel-title pull-left" style="padding-top: 3px;"><a href="/stations/<%=station.stationName%>"><%=station.stationName%></a></h4>
+                    <div class="btn-group pull-right"> 
+                    <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&#10006;</span></button>
+                  </div>
+                </div>
+                <div class="panel-body">
+                    <p><strong>Mac addres:</strong> <%=station.mac%></p>
+                    <p><strong>Temperature:</strong> <%=station.temperature%>&#176C</p>
+                    <p><strong>Humidity:</strong> <%=station.humidity%>%</p>
+                </div>
+            </div>
+          </div> 
+       <%})%>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12" style="padding-left: 0, padding-right: 0"> 
+      <table class="table table-dark table-striped table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Mac address</th>
+      <th scope="col">Station name</th>
+      <th scope="col">Temperature</th>
+      <th scope="col">Humidity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% $i = 1; stations.forEach(function(station) { %> 
+        <tr> 
+          <th scope="row"><%=$i%></th>
+
+          <td><a href="/stations/<%=station.stationName%>"><%=station.mac%></a></td>
+          <td><%=station.stationName%></td>
+          <td><%=station.temperature%>&#176C</td>
+          <td><%=station.humidity%> %</td>
+        </tr>
+    <%$i++%>
+    <%})%>
+  </tbody>
+</table>
+</div>
+
+</div>
+</div>
+	 <%} else {%>
+     <div class="container">
+      <h1>No stations yet!</h1>
+      </div>    
+    <%}%>
+
+</main>
+
+<% include ../partials/footer %>
