@@ -9,7 +9,6 @@ $.ajax({
     type: 'DELETE',
     url: '/stations/<%=station.stations[0].stationName%>/measures',
     success: function(redirect){
-      alert("sucesss");
       window.location=redirect;
     },
     error: function () {
