@@ -3,25 +3,43 @@
 <script type="text/javascript">
 
 $(document).ready(function () {
+
 var deleteResults = function() {
 $.ajax({
     type: 'DELETE',
     url: '/stations/<%=station.stations[0].stationName%>/measures',
     success: function(redirect){
-      //alert(data);
+      alert("sucesss");
       window.location=redirect;
     },
     error: function () {
         alert("There was an error processing this page.");
         return false;
     }
-});
-}
+})}
 
+var deleteStation = function() {
+$.ajax({
+    type: 'DELETE',
+    url: '/stations/<%=station.stations[0].stationName%>',
+    success: function(redirect){
+      window.location=redirect;
+    },
+    error: function () {
+        alert("There was an error processing this page.");
+        return false;
+    }
+})}
+
+$("#delete-station").on("click", function (e) {
+  e.preventDefault();
+  deleteStation();
+});
 $("#delete-results").on("click", function (e) {
   e.preventDefault();
   deleteResults();
 });
+
 });
 
 </script>
@@ -32,7 +50,7 @@ $("#delete-results").on("click", function (e) {
 
 <%if(station) {%>
 
-<h1>Station: <%=station.stations[0].stationName%><div class="pull-right"><button id="delete-results" type="button" class="btn btn-danger">Delete results</button></div></h1>
+<div><h1>Station: <%=station.stations[0].stationName%> <button id="delete-station" type="button" class="btn btn-danger btn-sm">Delete station</button><div class="pull-right"><button id="delete-results" type="button" class="btn btn-danger btn-sm">Delete results</button></div></h1>
 
 <div class="row">
   <div class="col-md-12" style="padding-left: 0, padding-right: 0"> 

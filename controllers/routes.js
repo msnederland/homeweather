@@ -33,6 +33,7 @@ const User = require('../models/user');
         User.findOne({apiKey: user.apiKey})
         .exec()
         .then(stations => {
+            console.log(stations)
             res.render('./pages/stations.ejs', {user: req.user, stations: stations.stations, title: "Stations page"});
         })
         .catch(err => {
@@ -62,6 +63,27 @@ const User = require('../models/user');
 
     });
 
+    app.delete('/stations/:station', isLoggedIn, function(req, res) {
+
+        var user = {
+        apiKey: req.user.apiKey
+        }
+
+        var station = req.params.station
+        var redirect = "/stations/"
+
+        User.update({apiKey: user.apiKey, 'stations.stationName': station}, {$pull: {stations: {'stationName': station}}})
+        .exec()
+        .then(station => {
+            console.log(station)
+            res.status(200).send(redirect);
+        })
+        .catch(err => {
+         res.send(400);
+        });
+
+    });    
+
     app.delete('/stations/:station/measures', isLoggedIn, function(req, res) {
         
         var user = {
@@ -81,6 +103,28 @@ const User = require('../models/user');
         });
 
     });
+
+    /*
+    app.delete('/stations/:station', isLoggedIn, function(req, res) {
+        
+        var user = {
+        apiKey: req.user.apiKey
+        }
+
+        var station = req.params.station
+        var redirect = "/stations/" + station
+
+        User.update({apiKey: user.apiKey, 'stations.stationName': station }, {$unset: {'stations.$.measures': []}}, {multi:true})
+        .exec()
+        .then(station => {
+            res.status(200).send(redirect);
+        })
+        .catch(err => {
+         res.send(400);
+        });
+
+    })
+    */
 
 
     // LOGOUT ==============================

@@ -159,6 +159,8 @@ app.delete('/api/stations', function(req,res,next){
 })
 
 app.delete('/api/stations/:stationName', function(req,res,next){
+	console.log("THIS WAS THE FUCKING REQUEST!!!!")
+	console.log(req)
 
 	var user = {
     	apiKey: req.user.apiKey
