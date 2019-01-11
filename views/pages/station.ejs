@@ -30,14 +30,16 @@ $.ajax({
     }
 })}
 
-$("#delete-station").on("click", function (e) {
+$("#confirm-delete-station").on("click", function (e) {
   e.preventDefault();
   deleteStation();
 });
-$("#delete-results").on("click", function (e) {
+
+$("#confirm-delete-results").on("click", function (e) {
   e.preventDefault();
   deleteResults();
 });
+
 
 });
 
@@ -49,7 +51,7 @@ $("#delete-results").on("click", function (e) {
 
 <%if(station) {%>
 
-<div><h1>Station: <%=station.stations[0].stationName%> <button id="delete-station" type="button" class="btn btn-danger btn-sm">Delete station</button><div class="pull-right"><button id="delete-results" type="button" class="btn btn-danger btn-sm">Delete results</button></div></h1>
+<div><h1>Station: <%=station.stations[0].stationName%> <button data-toggle="modal" data-target="#confirm-delete-station-modal" type="button" class="btn btn-danger btn-sm">Delete station</button><div class="pull-right"><button data-toggle="modal" data-target="#confirm-delete-results-modal" type="button" class="btn btn-danger btn-sm">Delete results</button></div></h1>
 
 <div class="row">
   <div class="col-md-12" style="padding-left: 0, padding-right: 0"> 
@@ -80,6 +82,40 @@ $("#delete-results").on("click", function (e) {
 NO FUCKING STATION!
 <%}%>
 
+<div class="modal fade" id="confirm-delete-results-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+              <strong>Delete all measurement data?</strong>
+            </div>
+            <div class="modal-body">
+                Do you want to delete all measurement data from station: <strong><%=station.stations[0].stationName%></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a id="confirm-delete-results" class="btn btn-danger btn-ok">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="confirm-delete-station-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+              <strong>Delete station?</strong>
+            </div>
+            <div class="modal-body">
+                Do you want to delete station: <strong><%=station.stations[0].stationName%></strong>? This will delete the station and all its data!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a id="confirm-delete-station" class="btn btn-danger btn-ok">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 </main>
