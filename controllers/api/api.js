@@ -14,11 +14,19 @@ app.use(passport.authenticate('bearer', { session: false }));
 
 app.get('/api/stations', function(req, res, next) {
 
-	var user = {
+	const user = {
 		apiKey: req.user.apiKey
 	}
+
+	const query = {
+		apiKey: user.apiKey
+	}
+
+	const options = {
+		stations: 1
+	}
 	
-	User.findOne({apiKey: user.apiKey})
+	User.find(query, options)
 	.exec()
 	.then(stations => {
 		console.log(stations);
@@ -36,8 +44,17 @@ app.get('/api/stations/:stationName', function(req, res, next) {
 	var user = {
 		apiKey: req.user.apiKey
 	}
+
+	const query = {
+		apiKey: user.apiKey,
+		'stations.stationName': req.params.stationName
+	}
+
+	const options = {
+		'stations.$': 1
+	}
 	
-	User.findOne({apiKey: user.apiKey}, {stations: 1})
+	User.find(query, options)
 	.exec()
 	.then(stations => {
 		console.log(stations);
@@ -55,11 +72,75 @@ app.get('/api/stations/:stationName/measures', function(req, res, next) {
 	var user = {
 		apiKey: req.user.apiKey
 	}
+
+	const query = {
+		apiKey: user.apiKey,
+		'stations.stationName': req.params.stationName
+	}
+
 	
-	User.find({apiKey: user.apiKey}, {stations: 1})
+	const options = {
+		'stations.$.measures': 1,
+	}
+	
+	
+	User.findOne(query, options)
 	.exec()
-	.then(stations => {
-		console.log(stations);
+	.then(stations => {		
+		res.status(200).send(stations)
+	})
+	.catch(err => {
+		console.log(err);
+		res.status(400).send(err);
+	})
+
+});
+
+app.get('/api/stations/:stationName/measures/temperature', function(req, res, next) {
+
+	var user = {
+		apiKey: req.user.apiKey
+	}
+
+	const query = {
+		apiKey: user.apiKey,
+		'stations.stationName': req.params.stationName
+	}
+
+	const options = {
+		'stations.temperature': 1
+	}
+	
+	User.find(query, options)
+	.exec()
+	.then(stations => {		
+		res.status(200).send(stations)
+	})
+	.catch(err => {
+		console.log(err);
+		res.status(400).send(err);
+	})
+
+});
+
+app.get('/api/stations/:stationName/measures/humidity', function(req, res, next) {
+
+	var user = {
+		apiKey: req.user.apiKey
+	}
+
+	const query = {
+		apiKey: user.apiKey,
+		'stations.stationName': req.params.stationName
+	}
+
+	const options = {
+		'stations.humidity': 1
+	}
+	
+	User.find(query, options)
+	.exec()
+	.then(stations => {		
 		res.status(200).send(stations)
 	})
 	.catch(err => {
@@ -109,19 +190,34 @@ app.post('/api/stations', function(req, res, next) {
 
 app.post('/api/stations/:stationName/measures', function(req, res, next) {
 
-    var user = {
-    	apiKey: req.user.apiKey
-    }
+    var now = new Date()
 
-	var station = {
-			mac: req.body.mac,
-			stationName: req.params.stationName,
-			measures: req.body.measures,
-			temperature: req.body.measures.temperature,
-			humidity: req.body.measures.humidity
+	const station = {
+		mac: req.body.mac,
+		stationName: req.params.stationName,
+		measures: {
+			date: now,
+			temperature: req.body.temperature,
+			humidity: req.body.humidity
+		}
 	}
 
-	User.findOneAndUpdate({apiKey: user.apiKey, 'stations.stationName': station.stationName }, {$push: {'stations.$.measures': station.measures  }, $set: {'stations.$.temperature': station.temperature, 'stations.$.humidity': station.humidity}})
+	const query = {
+		apiKey: req.user.apiKey, 
+		'stations.stationName': station.stationName 
+	}
+
+	const setDoc = { 
+		$push: {
+			'stations.$.measures': station.measures
+		}, 
+		$set: { 
+			'stations.$.lastUpdated': now,
+			'stations.$.syncReadings': true
+		}
+	}
+
+	User.findOneAndUpdate(query, setDoc)
 	.exec()
 	.then(result => {
 		if(result) {
@@ -135,6 +231,95 @@ app.post('/api/stations/:stationName/measures', function(req, res, next) {
 		res.status(400).send(err)
 	})
 });
+
+app.post('/api/stations/:stationName/measures/temperature', function(req, res, next) {
+
+    var now = new Date()
+
+	const station = {
+		mac: req.body.mac,
+		stationName: req.params.stationName,
+		temperature: {
+			date: now,
+			temperature: req.body.temperature
+		}
+	}
+
+	const query = {
+		apiKey: req.user.apiKey, 
+		'stations.stationName': station.stationName 
+	}
+
+	const setDoc = { 
+		$push: {
+			'stations.$.temperature': station.temperature
+		}, 
+		$set: { 
+			'stations.$.lastUpdated': now,
+			'stations.$.syncReadings': false
+		}
+	}
+
+	User.findOneAndUpdate(query, setDoc)
+	.exec()
+	.then(result => {
+		if(result) {
+			res.status(200).send("Updated temperature");
+		} else if(!result) {
+			res.status(400).send("Station not found!")
+		}
+	})
+	.catch(err =>{
+		console.log(err);
+		res.status(400).send(err)
+	})
+});
+
+
+app.post('/api/stations/:stationName/measures/humidity', function(req, res, next) {
+
+    var now = new Date()
+
+	const station = {
+		mac: req.body.mac,
+		stationName: req.params.stationName,
+		humidity: {
+			date: now,
+			temperature: req.body.humidity
+		}
+	}
+
+	const query = {
+		apiKey: req.user.apiKey, 
+		'stations.stationName': station.stationName 
+	}
+
+	const setDoc = { 
+		$push: {
+			'stations.$.humidity': station.temperature
+		}, 
+		$set: { 
+			'stations.$.lastUpdated': now,
+			'stations.$.syncReadings': false
+		}
+	}
+
+	User.findOneAndUpdate(query, setDoc)
+	.exec()
+	.then(result => {
+		if(result) {
+			res.status(200).send("Updated humidity");
+		} else if(!result) {
+			res.status(400).send("Station not found!")
+		}
+	})
+	.catch(err =>{
+		console.log(err);
+		res.status(400).send(err)
+	})
+});
+
+
 
 // DELETE requests
 app.delete('/api/stations', function(req,res,next){
@@ -159,8 +344,6 @@ app.delete('/api/stations', function(req,res,next){
 })
 
 app.delete('/api/stations/:stationName', function(req,res,next){
-	console.log("THIS WAS THE FUCKING REQUEST!!!!")
-	console.log(req)
 
 	var user = {
     	apiKey: req.user.apiKey

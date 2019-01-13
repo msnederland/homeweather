@@ -1,59 +1,64 @@
-// load the things we need
-var mongoose = require('mongoose');
-var bcrypt   = require('bcrypt-nodejs');
+                // Load dependencies
+                var mongoose = require('mongoose');
+                var bcrypt   = require('bcrypt-nodejs');
 
-// Main measures schema
-const stationSchema = new mongoose.Schema({
-    mac: String,
-    stationName: String,
-    temperature: Number,
-    humidity: Number,
-    lastUpdated: Date,
-    measures: Array
-});
+                // Define station schema
+                const stationSchema = new mongoose.Schema({
+                    mac: String,
+                    stationName: String,
+                    syncReadings: Boolean,
+                    temperature: Array,
+                    humidity: Array,
+                    measures: [{
+                        date: Date,
+                        temperature: Number,
+                        humidity: Number
+                    }],
+                    lastUpdated: Date
+                });
 
-// define the schema for our user model
-var userSchema = mongoose.Schema({
+                // Define user schema
+                var userSchema = mongoose.Schema({
 
-    local            : {
-        email        : String,
-        password     : String
-    },
-    facebook         : {
-        id           : String,
-        token        : String,
-        name         : String,
-        email        : String
-    },
-    twitter          : {
-        id           : String,
-        token        : String,
-        displayName  : String,
-        username     : String
-    },
-    google           : {
-        id           : String,
-        token        : String,
-        email        : String,
-        name         : String
-    },
-    apiKey: String,
-    stations : [stationSchema]
+                    local            : {
+                        email        : String,
+                        password     : String
+                    },
+                    facebook         : {
+                        id           : String,
+                        token        : String,
+                        name         : String,
+                        email        : String
+                    },
+                    twitter          : {
+                        id           : String,
+                        token        : String,
+                        displayName  : String,
+                        username     : String
+                    },
+                    google           : {
+                        id           : String,
+                        token        : String,
+                        email        : String,
+                        name         : String
+                    },
+                    apiKey: String,
+                    stations : [stationSchema]
 
-},  {
-        usePushEach: true 
-    }
-);
+                },  {
+                        usePushEach: true 
+                    }
+                );
 
-// generating a hash
-userSchema.methods.generateHash = function(password) {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-};
+                // generating a hash
+                userSchema.methods.generateHash = function(password) {
+                    return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+                };
 
-// checking if password is valid
-userSchema.methods.validPassword = function(password) {
-    return bcrypt.compareSync(password, this.local.password);
-};
+                // checking if password is valid
+                userSchema.methods.validPassword = function(password) {
+                    return bcrypt.compareSync(password, this.local.password);
+                };
 
-// create the model for users and expose it to our app
-module.exports = mongoose.model('User', userSchema);
+                // create the model for users and expose it to our app
+                module.exports = mongoose.model('User', userSchema);

@@ -93,7 +93,7 @@ const User = require('../models/user');
         var station = req.params.station
         var redirect = "/stations/" + station
 
-        User.update({apiKey: user.apiKey, 'stations.stationName': station }, {$unset: {'stations.$.measures': []}}, {multi:true})
+        User.update({apiKey: user.apiKey, 'stations.stationName': station }, {$unset: {'stations.$.temperature': [], 'stations.$.humidity': []}}, {multi:true})
         .exec()
         .then(station => {
             res.status(200).send(redirect);
@@ -103,28 +103,6 @@ const User = require('../models/user');
         });
 
     });
-
-    /*
-    app.delete('/stations/:station', isLoggedIn, function(req, res) {
-        
-        var user = {
-        apiKey: req.user.apiKey
-        }
-
-        var station = req.params.station
-        var redirect = "/stations/" + station
-
-        User.update({apiKey: user.apiKey, 'stations.stationName': station }, {$unset: {'stations.$.measures': []}}, {multi:true})
-        .exec()
-        .then(station => {
-            res.status(200).send(redirect);
-        })
-        .catch(err => {
-         res.send(400);
-        });
-
-    })
-    */
 
 
     // LOGOUT ==============================

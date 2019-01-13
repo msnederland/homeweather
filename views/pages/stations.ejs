@@ -22,9 +22,11 @@
                   </div>
                 </div>
                 <div class="panel-body">
+                   <%var lastValueTemp = station.temperature.length - 1%>
+                   <%var lastValueHumidity = station.humidity.length - 1%>
                     <p><strong>Mac addres:</strong> <%=station.mac%></p>
-                    <p><strong>Temperature:</strong> <%=station.temperature%>&#176C</p>
-                    <p><strong>Humidity:</strong> <%=station.humidity%>%</p>
+                    <p><strong>Temperature:</strong> <%=station.temperature[lastValueTemp].reading%>&#176C</p>
+                    <p><strong>Humidity:</strong> <%=station.humidity[lastValueHumidity].reading%>%</p>
                 </div>
             </div>
           </div> 
@@ -39,19 +41,23 @@
       <th scope="col">#</th>
       <th scope="col">Mac address</th>
       <th scope="col">Station name</th>
-      <th scope="col">Temperature</th>
-      <th scope="col">Humidity</th>
+      <th scope="col">Latest temperature</th>
+      <th scope="col">Latest humidity</th>
+      <th scope="col">Last update</th>
     </tr>
   </thead>
   <tbody>
-    <% $i = 1; stations.forEach(function(station) { %> 
+    <% $i = 1; stations.forEach(function(station) { %>
+    <%var lastValueTemp = station.temperature.length - 1%>
+    <%var lastValueHumidity = station.humidity.length - 1%>
         <tr> 
           <th scope="row"><%=$i%></th>
 
           <td><a href="/stations/<%=station.stationName%>"><%=station.mac%></a></td>
           <td><%=station.stationName%></td>
-          <td><%=station.temperature%>&#176C</td>
-          <td><%=station.humidity%> %</td>
+          <td><%=station.temperature[lastValueTemp].reading%>&#176C</td>
+          <td><%=station.humidity[lastValueHumidity].reading%> %</td>
+          <td><%=station.lastUpdated%></td>
         </tr>
     <%$i++%>
     <%})%>
