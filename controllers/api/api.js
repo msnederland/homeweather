@@ -176,7 +176,7 @@ app.post('/api/stations', function(req, res, next) {
 	.then(result => {
 		if(result.length > 0) {
 			console.log(result)
-			res.status(400).send("found station, so no way dude!");
+			res.status(400).send("found station on mac or stationName, so no way dude!");
 		} else if(result.length == 0) {
 			User.findOneAndUpdate({apiKey: user.apiKey}, {$push: {'stations': station }})
 			.exec()
