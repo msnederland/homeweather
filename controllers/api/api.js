@@ -161,12 +161,23 @@ app.post('/api/stations', function(req, res, next) {
 		stationName: req.body.stationName
 	}
 
-	User.findOne({apiKey: user.apiKey, 'stations.mac': station.mac })
+    const agrDoc = { $match: { 
+		$and: [ 
+    		{apiKey: user.apiKey},  
+    		{$or:[ 
+    			{'stations.mac': station.mac},
+             	{'stations.stationName': station.stationName}] 
+    		}]
+		}
+	}
+
+	User.aggregate(agrDoc)
 	.exec()
 	.then(result => {
-		if(result) {
+		if(result.length > 0) {
+			console.log(result)
 			res.status(400).send("found station, so no way dude!");
-		} else if(!result) {
+		} else if(result.length == 0) {
 			User.findOneAndUpdate({apiKey: user.apiKey}, {$push: {'stations': station }})
 			.exec()
 			.then(result =>{
@@ -204,7 +215,8 @@ app.post('/api/stations/:stationName/measures', function(req, res, next) {
 
 	const query = {
 		apiKey: req.user.apiKey, 
-		'stations.stationName': station.stationName 
+		'stations.stationName': station.stationName,
+		'stations.mac': station.mac
 	}
 
 	const setDoc = { 
@@ -250,7 +262,8 @@ app.post('/api/stations/:stationName/measures/temperature', function(req, res, n
 
 	const query = {
 		apiKey: req.user.apiKey, 
-		'stations.stationName': station.stationName 
+		'stations.stationName': station.stationName,
+		'stations.mac': station.mac 
 	}
 
 	const setDoc = { 
@@ -296,7 +309,8 @@ app.post('/api/stations/:stationName/measures/humidity', function(req, res, next
 
 	const query = {
 		apiKey: req.user.apiKey, 
-		'stations.stationName': station.stationName 
+		'stations.stationName': station.stationName,
+		'stations.mac': station.mac 
 	}
 
 	const setDoc = { 
