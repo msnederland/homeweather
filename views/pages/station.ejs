@@ -7,7 +7,7 @@ $(document).ready(function () {
 var deleteResults = function() {
 $.ajax({
     type: 'DELETE',
-    url: '/stations/<%=station.stations[0].stationName%>/measures',
+    url: '/stations/<%=station.stationName%>/measures',
     success: function(redirect){
       window.location=redirect;
     },
@@ -20,7 +20,7 @@ $.ajax({
 var deleteStation = function() {
 $.ajax({
     type: 'DELETE',
-    url: '/stations/<%=station.stations[0].stationName%>',
+    url: '/stations/<%=station.stationName%>',
     success: function(redirect){
       window.location=redirect;
     },
@@ -51,7 +51,7 @@ $("#confirm-delete-results").on("click", function (e) {
 
 <%if(station) {%>
 
-<div><h1>Station: <%=station.stations[0].stationName%> <button data-toggle="modal" data-target="#confirm-delete-station-modal" type="button" class="btn btn-danger btn-sm">Delete station</button><div class="pull-right"><button data-toggle="modal" data-target="#confirm-delete-results-modal" type="button" class="btn btn-danger btn-sm">Delete results</button></div></h1>
+<div><h1>Station: <%=station.stationName%> <button data-toggle="modal" data-target="#confirm-delete-station-modal" type="button" class="btn btn-danger btn-sm">Delete station</button><div class="pull-right"><button data-toggle="modal" data-target="#confirm-delete-results-modal" type="button" class="btn btn-danger btn-sm">Delete results</button></div></h1>
 
 <div class="row">
   <div class="col-md-12" style="padding-left: 0, padding-right: 0"> 
@@ -64,7 +64,7 @@ $("#confirm-delete-results").on("click", function (e) {
         </tr>
       </thead>
       <tbody>
-        <% $i = 1; station.stations[0].measures.forEach(function(measures) { %>
+        <% $i = 1; station.measures.forEach(function(measures) { %>
         <tr>
           <th scope="row"><%=$i%></th>
           <td><%=measures.temperature%>&#176C</td>
@@ -89,7 +89,7 @@ NO FUCKING STATION!
               <strong>Delete all measurement data?</strong>
             </div>
             <div class="modal-body">
-                Do you want to delete all measurement data from station: <strong><%=station.stations[0].stationName%></strong>?
+                Do you want to delete all measurement data from station: <strong><%=station.stationName%></strong>?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -107,7 +107,7 @@ NO FUCKING STATION!
               <strong>Delete station?</strong>
             </div>
             <div class="modal-body">
-                Do you want to delete station: <strong><%=station.stations[0].stationName%></strong>? This will delete the station and all its data!
+                Do you want to delete station: <strong><%=station.stationName%></strong>? This will delete the station and all its data!
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

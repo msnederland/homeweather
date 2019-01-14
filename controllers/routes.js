@@ -54,7 +54,7 @@ const User = require('../models/user');
         User.findOne({apiKey: user.apiKey, 'stations.stationName': station }, {'stations.$': 1})
         .exec()
         .then(station => {
-            res.render('./pages/station.ejs', {user: req.user, station: station, title: "Stations page"});
+            res.render('./pages/station.ejs', {user: req.user, station: station.stations[0], title: "Stations page"});
         })
         .catch(err => {
             console.log(err);
@@ -93,7 +93,7 @@ const User = require('../models/user');
         var station = req.params.station
         var redirect = "/stations/" + station
 
-        User.update({apiKey: user.apiKey, 'stations.stationName': station }, {$unset: {'stations.$.temperature': [], 'stations.$.humidity': []}}, {multi:true})
+        User.update({apiKey: user.apiKey, 'stations.stationName': station }, {$unset: {'stations.$.temperature': [], 'stations.$.humidity': [], 'stations.$.measures': []}}, {multi:true})
         .exec()
         .then(station => {
             res.status(200).send(redirect);

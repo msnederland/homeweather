@@ -25,8 +25,12 @@
                    <%var lastValueTemp = station.temperature.length - 1%>
                    <%var lastValueHumidity = station.humidity.length - 1%>
                     <p><strong>Mac addres:</strong> <%=station.mac%></p>
-                    <p><strong>Temperature:</strong> <%=station.temperature[lastValueTemp].reading%>&#176C</p>
-                    <p><strong>Humidity:</strong> <%=station.humidity[lastValueHumidity].reading%>%</p>
+                    <% if(station.firstReadings == true){ %>
+                    <p><strong>Temperature:</strong> <%=station.latestTemperature%>&#176C</p>
+                    <%}%>
+                    <% if(station.firstReadings == true){ %>
+                    <p><strong>Humidity:</strong> <%=station.latestHumidity%>%</p>
+                     <%}%>
                 </div>
             </div>
           </div> 
@@ -47,7 +51,9 @@
     </tr>
   </thead>
   <tbody>
+    
     <% $i = 1; stations.forEach(function(station) { %>
+    <% if(station.firstReadings == true){ %>
     <%var lastValueTemp = station.temperature.length - 1%>
     <%var lastValueHumidity = station.humidity.length - 1%>
         <tr> 
@@ -55,11 +61,12 @@
 
           <td><a href="/stations/<%=station.stationName%>"><%=station.mac%></a></td>
           <td><%=station.stationName%></td>
-          <td><%=station.temperature[lastValueTemp].reading%>&#176C</td>
-          <td><%=station.humidity[lastValueHumidity].reading%> %</td>
+          <td><%=station.latestTemperature%>&#176C</td>
+          <td><%=station.latestHumidity%> %</td>
           <td><%=station.lastUpdated%></td>
         </tr>
     <%$i++%>
+    <%}%>
     <%})%>
   </tbody>
 </table>

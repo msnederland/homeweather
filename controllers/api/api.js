@@ -54,7 +54,7 @@ app.get('/api/stations/:stationName', function(req, res, next) {
 		'stations.$': 1
 	}
 	
-	User.find(query, options)
+	User.findOne(query, options)
 	.exec()
 	.then(stations => {
 		console.log(stations);
@@ -213,7 +213,10 @@ app.post('/api/stations/:stationName/measures', function(req, res, next) {
 		}, 
 		$set: { 
 			'stations.$.lastUpdated': now,
-			'stations.$.syncReadings': true
+			'stations.$.syncReadings': true,
+			'stations.$.firstReadings': true,
+			'stations.$.latestTemperature': station.measures.temperature,
+			'stations.$.latestHumidity': station.measures.humidity
 		}
 	}
 
@@ -241,7 +244,7 @@ app.post('/api/stations/:stationName/measures/temperature', function(req, res, n
 		stationName: req.params.stationName,
 		temperature: {
 			date: now,
-			temperature: req.body.temperature
+			reading: req.body.temperature
 		}
 	}
 
@@ -254,9 +257,11 @@ app.post('/api/stations/:stationName/measures/temperature', function(req, res, n
 		$push: {
 			'stations.$.temperature': station.temperature
 		}, 
-		$set: { 
+		$set: {
+			'stations.$.latestTemperature': station.temperature.reading, 
 			'stations.$.lastUpdated': now,
-			'stations.$.syncReadings': false
+			'stations.$.syncReadings': false,
+			'stations.$.firstReadings': true
 		}
 	}
 

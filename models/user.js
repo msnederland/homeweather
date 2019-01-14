@@ -7,8 +7,19 @@
                     mac: String,
                     stationName: String,
                     syncReadings: Boolean,
-                    temperature: Array,
-                    humidity: Array,
+                    firstReadings: {type: Boolean, default: false},
+                    latestTemperature: Number,
+                    latestHumidity: Number,
+                    temperature: [{
+                        date: Date,
+                        reading: {type: Number, default: ""},
+                        humidity: Number
+                    }],
+                    humidity:[{
+                        date: Date,
+                        reading: {type: Number, default: ""},
+                        humidity: Number
+                    }],
                     measures: [{
                         date: Date,
                         temperature: Number,
