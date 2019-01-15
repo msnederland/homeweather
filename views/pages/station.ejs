@@ -52,6 +52,7 @@ $("#confirm-delete-results").on("click", function (e) {
 <%if(station) {%>
 
 <div><h1>Station: <%=station.stationName%> <button data-toggle="modal" data-target="#confirm-delete-station-modal" type="button" class="btn btn-danger btn-sm">Delete station</button><div class="pull-right"><button data-toggle="modal" data-target="#confirm-delete-results-modal" type="button" class="btn btn-danger btn-sm">Delete results</button></div></h1>
+<h5>MAC address: <%=station.mac%></h5>
 
 <div class="row">
   <div class="col-md-12" style="padding-left: 0, padding-right: 0"> 
