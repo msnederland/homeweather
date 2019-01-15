@@ -161,28 +161,30 @@ app.post('/api/stations', function(req, res, next) {
 		stationName: req.body.stationName
 	}
 
-    const agrDoc = { $match: { 
-		$and: [ 
-    		{apiKey: user.apiKey},  
-    		{$or:[ 
-    			{'stations.mac': station.mac},
-             	{'stations.stationName': station.stationName}] 
-    		}]
+	const query = {
+		apiKey: req.user.apiKey	 
+	} 
+
+    const elemMatch = {
+		stations: { $elemMatch: {$or: [
+			{	'stationName': station.stationName},
+			{	'mac': station.mac}
+			]}	
 		}
 	}
 
-	User.aggregate(agrDoc)
+	User.findOne(query, elemMatch)
 	.exec()
 	.then(result => {
-		if(result.length > 0) {
+		if(result.stations.length  > 0) {
 			console.log(result)
-			res.status(400).send("found station on mac or stationName, so no way dude!");
-		} else if(result.length == 0) {
+			res.status(400).send(result);
+		} else if(result.stations.length == 0) {
 			User.findOneAndUpdate({apiKey: user.apiKey}, {$push: {'stations': station }})
 			.exec()
 			.then(result =>{
 				if(result) {
-					res.status(200).send("no station found, soo ok... I'l add it!")
+					res.status(200).send(result)
 				} else if(!result) {
 					res.status(400).send("API Key invalid")
 				}
@@ -214,9 +216,17 @@ app.post('/api/stations/:stationName/measures', function(req, res, next) {
 	}
 
 	const query = {
-		apiKey: req.user.apiKey, 
+		apiKey: req.user.apiKey,
 		'stations.stationName': station.stationName,
-		'stations.mac': station.mac
+		'stations.mac': station.mac	 
+	}
+
+	const elemMatch = {
+		stations: { $elemMatch:
+			{	'stationName': station.stationName,
+				'mac': station.mac
+			}
+		}
 	}
 
 	const setDoc = { 
@@ -232,7 +242,7 @@ app.post('/api/stations/:stationName/measures', function(req, res, next) {
 		}
 	}
 
-	User.findOneAndUpdate(query, setDoc)
+	User.findOneAndUpdate(query, elemMatch, setDoc)
 	.exec()
 	.then(result => {
 		if(result) {
