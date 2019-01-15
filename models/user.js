@@ -5,8 +5,8 @@ var uniqueValidator = require('mongoose-unique-validator');
 
 // Define station schema
 const stationSchema = new mongoose.Schema({
-    mac: {type: String, required: true, index: {unique: true}},
-    stationName: {type: String, required: true, index: {unique: true}},
+    mac: String,
+    stationName: String,
     syncReadings: Boolean,
     firstReadings: {type: Boolean, default: false},
     latestTemperature: Number,

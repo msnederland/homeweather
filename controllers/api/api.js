@@ -216,9 +216,7 @@ app.post('/api/stations/:stationName/measures', function(req, res, next) {
 	}
 
 	const query = {
-		apiKey: req.user.apiKey,
-		'stations.stationName': station.stationName,
-		'stations.mac': station.mac	 
+		apiKey: req.user.apiKey
 	}
 
 	const elemMatch = {
@@ -242,13 +240,24 @@ app.post('/api/stations/:stationName/measures', function(req, res, next) {
 		}
 	}
 
-	User.findOneAndUpdate(query, elemMatch, setDoc)
+	User.findOne(query, elemMatch)
 	.exec()
 	.then(result => {
-		if(result) {
-			res.status(200).send("Updated measures");
-		} else if(!result) {
+		console.log(result);
+		if(result.stations.length > 0) {
+			User.findOneAndUpdate({apiKey: query.apiKey, 'stations.stationName': station.stationName}, setDoc)
+			.exec()
+			.then(result => {
+				res.status(200).send("Updated measures");
+			})
+			.catch(err =>{
+				console.log(err);
+				res.status(400).send(err)
+			})
+		} else if(result.stations.length == 0) {
 			res.status(400).send("Station not found!")
+		} else {
+			res.status(400).send("Some error updating measures")
 		}
 	})
 	.catch(err =>{
@@ -382,9 +391,10 @@ app.delete('/api/stations/:stationName', function(req,res,next){
 			stationName: req.params.stationName,
 	}
 
-	User.update({'stations.stationName': station.stationName, apiKey: user.apiKey}, {$pull: {stations: {'stationName': station.stationName}}})
+	User.update({apiKey: user.apiKey, 'stations.stationName': station.stationName}, {$pull: {stations: {'stationName': station.stationName}}})
 	.exec()
 	.then(result => {
+		console.log(result);
 		if(result) {
 			res.status(200).send(result);
 		} else if(!result) {
